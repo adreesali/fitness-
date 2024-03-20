@@ -19,7 +19,6 @@ const Signup = () => {
         .catch(err => console.log(err))
     }
 
-
   return (
     <div>
       <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">

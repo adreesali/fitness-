@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001;
 
 const pool = new Pool({
     user: 'postgres',
-    host: 'localhost',
+    host: 'localhost',mm  
     database: 'users', 
     password: '1234',
     port: 5432,
@@ -75,10 +75,21 @@ Adults often have diverse fitness goals, ranging from weight management to stres
 In conclusion, tailoring workouts for children, adults, and seniors is essential for promoting overall health and vitality at every stage of life. By customizing exercise routines to meet the specific needs and abilities of each age group, individuals can enjoy the lifelong benefits of staying active and fit. Remember, it's never too early or too late to start prioritizing your health and well-being through regular physical activity.')
  `;
  
-    await pool.query(insertQuery);
+    // await pool.query(insertQuery);   
 
-
-
+ 
+    app.get('/articles', async (req, res) => {
+        try {
+          const client = await pool.connect();
+          const result = await client.query('SELECT * FROM fitness_articles');
+          client.release();
+          res.status(200).json(result.rows);
+        } catch (error) {
+          console.error('Error fetching articles:', error);
+          res.status(500).json({ message: 'Internal server error' });
+        }
+      });
+     
 
 // Endpoint to handle user registration
 app.post('/register', async (req, res) => {

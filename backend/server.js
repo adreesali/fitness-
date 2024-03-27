@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001;
 
 const pool = new Pool({
     user: 'postgres',
-    host: 'localhost',mm  
+    host: 'localhost',
     database: 'users', 
     password: '1234',
     port: 5432,
@@ -111,12 +111,46 @@ app.post('/register', async (req, res) => {
 });
 
 // Endpoint to handle user login
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+// app.post('/login', async (req, res) => {
+//     const { email, password } = req.body;
+//     try {
+//         const client = await pool.connect();
+//         const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+//         client.release();
+//         const user = result.rows[0];
+//         if (!user) {
+//             return res.status(400).json({ message: 'Invalid credentials' });
+//         }
+//         const isPasswordMatch = await bcrypt.compare(password, user.password);
+//         if (!isPasswordMatch) {
+//             return res.status(400).json({ message: 'Invalid credentials' });
+//         }
+//         res.status(200).json({ id: user.id, message: 'Login successful' });
+//     } catch (error) {
+//         console.error('Error during login:', error);
+//         res.status(500).json({ message: 'Internal server error' });
+//     }
+// });
+
+
+
+async function establishDBConnection() {
     try {
         const client = await pool.connect();
+        return client;
+    } catch (error) {
+        console.error('Error establishing database connection:', error);
+        throw error;
+    }
+}
+const clientPromise = establishDBConnection();
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    let client;
+    try {
+        client = await clientPromise;
         const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
-        client.release();
         const user = result.rows[0];
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
@@ -131,6 +165,8 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {

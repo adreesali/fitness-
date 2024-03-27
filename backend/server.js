@@ -102,7 +102,7 @@ app.post('/register', async (req, res) => {
         res.status(201).json({ id: result.rows[0].id, message: 'User registered successfully' });
     } catch (error) {
         console.error('Error during registration:', error);
-        if (error.code === '23505') { // Unique violation error code
+        if (error.code === '23505') { 
             res.status(400).json({ message: 'Email already in use' });
         } else {
             res.status(500).json({ message: 'Internal server error' });

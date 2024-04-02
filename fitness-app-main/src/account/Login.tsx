@@ -6,15 +6,13 @@ const Login = () => {
     const [password, setPassword] = useState("");
     
     const handleSubmit = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
+        e.preventDefault();   
         axios.post('http://localhost:3001/login', { email, password })
             .then(result => {
                 console.log(result);
-            
             })
             .catch(err => console.log(err));
-    };
-
+    }; 
     return (
         <div>
             <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
